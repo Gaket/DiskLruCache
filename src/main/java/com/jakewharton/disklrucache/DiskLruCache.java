@@ -430,15 +430,11 @@ public final class DiskLruCache implements Closeable {
 
     redundantOpCount++;
     journalWriter.append(READ + ' ' + key + '\n');
-    if (
-
-        journalRebuildRequired()) {
+    if (journalRebuildRequired()) {
       executorService.submit(cleanupCallable);
     }
 
-    return new
-
-        Snapshot(key, entry.sequenceNumber, ins, entry.lengths);
+    return new Snapshot(key, entry.sequenceNumber, ins, entry.lengths);
   }
 
   /**
