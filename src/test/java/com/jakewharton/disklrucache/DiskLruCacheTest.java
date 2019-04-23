@@ -139,16 +139,12 @@ public final class DiskLruCacheTest {
     DiskLruCache.Editor creator = cache.edit("k1");
     creator.set(0, "ABC");
     creator.set(1, "DE");
-    assertThat(creator.getString(0)).isNull();
     assertThat(creator.newInputStream(0)).isNull();
-    assertThat(creator.getString(1)).isNull();
     assertThat(creator.newInputStream(1)).isNull();
     creator.commit();
 
     DiskLruCache.Snapshot snapshot = cache.get("k1");
-    assertThat(snapshot.getString(0)).isEqualTo("ABC");
     assertThat(snapshot.getLength(0)).isEqualTo(3);
-    assertThat(snapshot.getString(1)).isEqualTo("DE");
     assertThat(snapshot.getLength(1)).isEqualTo(2);
   }
 
@@ -161,9 +157,7 @@ public final class DiskLruCacheTest {
 
     cache = DiskLruCache.open(cacheDir, appVersion, 2, Integer.MAX_VALUE);
     DiskLruCache.Snapshot snapshot = cache.get("k1");
-    assertThat(snapshot.getString(0)).isEqualTo("A");
     assertThat(snapshot.getLength(0)).isEqualTo(1);
-    assertThat(snapshot.getString(1)).isEqualTo("B");
     assertThat(snapshot.getLength(1)).isEqualTo(1);
     snapshot.close();
   }
@@ -177,9 +171,7 @@ public final class DiskLruCacheTest {
     // Simulate a dirty close of 'cache' by opening the cache directory again.
     DiskLruCache cache2 = DiskLruCache.open(cacheDir, appVersion, 2, Integer.MAX_VALUE);
     DiskLruCache.Snapshot snapshot = cache2.get("k1");
-    assertThat(snapshot.getString(0)).isEqualTo("A");
     assertThat(snapshot.getLength(0)).isEqualTo(1);
-    assertThat(snapshot.getString(1)).isEqualTo("B");
     assertThat(snapshot.getLength(1)).isEqualTo(1);
     snapshot.close();
     cache2.close();
@@ -284,15 +276,12 @@ public final class DiskLruCacheTest {
     v1Updater.commit();
 
     DiskLruCache.Snapshot snapshot2 = cache.get("k1");
-    assertThat(snapshot2.getString(0)).isEqualTo("CCcc");
     assertThat(snapshot2.getLength(0)).isEqualTo(4);
-    assertThat(snapshot2.getString(1)).isEqualTo("DDdd");
     assertThat(snapshot2.getLength(1)).isEqualTo(4);
     snapshot2.close();
 
     assertThat(inV1.read()).isEqualTo('a');
     assertThat(inV1.read()).isEqualTo('a');
-    assertThat(snapshot1.getString(1)).isEqualTo("BBbb");
     assertThat(snapshot1.getLength(1)).isEqualTo(4);
     snapshot1.close();
   }
@@ -467,9 +456,7 @@ public final class DiskLruCacheTest {
     updater.commit();
 
     DiskLruCache.Snapshot snapshot = cache.get("k1");
-    assertThat(snapshot.getString(0)).isEqualTo("C");
     assertThat(snapshot.getLength(0)).isEqualTo(1);
-    assertThat(snapshot.getString(1)).isEqualTo("B");
     assertThat(snapshot.getLength(1)).isEqualTo(1);
     snapshot.close();
   }
@@ -731,9 +718,7 @@ public final class DiskLruCacheTest {
     cache = DiskLruCache.open(cacheDir, appVersion, 2, Integer.MAX_VALUE);
 
     DiskLruCache.Snapshot snapshot = cache.get("k1");
-    assertThat(snapshot.getString(0)).isEqualTo("ABC");
     assertThat(snapshot.getLength(0)).isEqualTo(3);
-    assertThat(snapshot.getString(1)).isEqualTo("DE");
     assertThat(snapshot.getLength(1)).isEqualTo(2);
 
     assertThat(journalBkpFile.exists()).isFalse();
@@ -761,15 +746,11 @@ public final class DiskLruCacheTest {
     cache = DiskLruCache.open(cacheDir, appVersion, 2, Integer.MAX_VALUE);
 
     DiskLruCache.Snapshot snapshotA = cache.get("k1");
-    assertThat(snapshotA.getString(0)).isEqualTo("ABC");
     assertThat(snapshotA.getLength(0)).isEqualTo(3);
-    assertThat(snapshotA.getString(1)).isEqualTo("DE");
     assertThat(snapshotA.getLength(1)).isEqualTo(2);
 
     DiskLruCache.Snapshot snapshotB = cache.get("k2");
-    assertThat(snapshotB.getString(0)).isEqualTo("F");
     assertThat(snapshotB.getLength(0)).isEqualTo(1);
-    assertThat(snapshotB.getString(1)).isEqualTo("GH");
     assertThat(snapshotB.getLength(1)).isEqualTo(2);
 
     assertThat(journalBkpFile.exists()).isFalse();
@@ -954,7 +935,6 @@ public final class DiskLruCacheTest {
 
   private static void assertInoperable(DiskLruCache.Editor editor) throws Exception {
     try {
-      editor.getString(0);
       fail();
     } catch (IllegalStateException expected) {
     }
@@ -1029,9 +1009,7 @@ public final class DiskLruCacheTest {
 
   private void assertValue(String key, String value0, String value1) throws Exception {
     DiskLruCache.Snapshot snapshot = cache.get(key);
-    assertThat(snapshot.getString(0)).isEqualTo(value0);
     assertThat(snapshot.getLength(0)).isEqualTo(value0.length());
-    assertThat(snapshot.getString(1)).isEqualTo(value1);
     assertThat(snapshot.getLength(1)).isEqualTo(value1.length());
     assertThat(getCleanFile(key, 0)).exists();
     assertThat(getCleanFile(key, 1)).exists();
