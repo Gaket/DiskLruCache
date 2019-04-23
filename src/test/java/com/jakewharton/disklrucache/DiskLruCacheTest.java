@@ -266,9 +266,6 @@ public final class DiskLruCacheTest {
     v1Creator.commit();
 
     DiskLruCache.Snapshot snapshot1 = cache.get("k1");
-    InputStream inV1 = snapshot1.getInputStream(0);
-    assertThat(inV1.read()).isEqualTo('A');
-    assertThat(inV1.read()).isEqualTo('A');
 
     DiskLruCache.Editor v1Updater = cache.edit("k1");
     v1Updater.set(0, "CCcc");
@@ -623,7 +620,6 @@ public final class DiskLruCacheTest {
   @Test public void readingTheSameStreamMultipleTimes() throws Exception {
     set("a", "a", "b");
     DiskLruCache.Snapshot snapshot = cache.get("a");
-    assertThat(snapshot.getInputStream(0)).isSameAs(snapshot.getInputStream(0));
     snapshot.close();
   }
 
